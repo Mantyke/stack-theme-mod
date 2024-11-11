@@ -21,12 +21,20 @@
                     </div>
             
                     {{ if $link.image }}
-                        {{ $image := $siteResources.Get (delimit (slice "link-img/" $link.image) "") | resources.Fingerprint "md5" }}
-                        {{ $imageResized := $image.Resize "120x120" }}
-                        <div class="article-image">
-                            <img src="{{ $imageResized.RelPermalink }}" width="{{ $imageResized.Width }}" height="{{ $imageResized.Height }}"
-                                loading="lazy" data-key="links-{{ $link.website }}" data-hash="{{ $image.Data.Integrity }}">
-                        </div>
+                        {{ if strings.HasPrefix $link.image "https" or strings.HasPrefix $link.image "http" }}
+                            <div class="article-image">
+                                <img src="{{ $link.image }}" width="120" height="120" loading="lazy"
+                                     data-key="links-{{ $link.website }}">
+                            </div>
+                        {{ else }}
+                            {{ $image := $siteResources.Get (delimit (slice "link-img/" $link.image) "") | resources.Fingerprint "md5" }}
+                            {{ $imageResized := $image.Resize "120x120" }}
+                            <div class="article-image">
+                                <img src="{{ $imageResized.RelPermalink }}" width="{{ $imageResized.Width }}"
+                                     height="{{ $imageResized.Height }}" loading="lazy" data-key="links-{{ $link.website }}"
+                                     data-hash="{{ $image.Data.Integrity }}">
+                            </div>
+                        {{ end }}
                     {{ end }}
                 </a>
             </article>
